@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import { GetStaticProps } from "next";
 import Link from 'next/link';
 import Image from 'next/image';
@@ -6,6 +7,7 @@ import ptBR from 'date-fns/locale/pt-BR';
 
 import { api } from "../services/api";
 import { convertDurationToTimeString } from "../Utils/convertDurationToTimeString";
+import { PlayerContext } from "../contexts/PlayerContext";
 
 import styles from './home.module.scss';
 
@@ -27,6 +29,8 @@ type HomeProps = {
 
 
 export default function Home({ lastestEpisodes, allEpisodes }: HomeProps) {
+  const { Play } = useContext(PlayerContext);
+
   return (
     <div className={styles.homepage}>
       <section className={styles.lastestEpisodes}>
@@ -34,7 +38,7 @@ export default function Home({ lastestEpisodes, allEpisodes }: HomeProps) {
         <ul>
           {lastestEpisodes.map(episode => {
             return (
-              <li>
+              <li key={episode.id}>
                 <Image width={192} height={192} src={episode.thumbnail} alt={episode.title} objectFit='cover' />
                 <div className={styles.episodeDetails}>
                   <Link href={`/episodes/${episode.id}`}>
@@ -44,7 +48,7 @@ export default function Home({ lastestEpisodes, allEpisodes }: HomeProps) {
                   <span>{episode.publishedAt}</span>
                   <span>{episode.durationAsString}</span>
                 </div>
-                <button>
+                <button type="button" onClick={() => Play(episode)}>
                   <img src="/play-green.svg" alt="TocarEpisodio" />
                 </button>
               </li>
@@ -87,7 +91,7 @@ export default function Home({ lastestEpisodes, allEpisodes }: HomeProps) {
                   <td style={{ width: 100 }}>{episode.publishedAt}</td>
                   <td>{episode.durationAsString}</td>
                   <td>
-                    <button>
+                    <button type='button' onClick={() => Play(episode)}>
                       <img src="/play-green.svg" alt="tocarEpisodio" />
                     </button>
                   </td>
